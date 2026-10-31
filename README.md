@@ -4,6 +4,8 @@ Multi-tenant CRM built with Next.js 16 and TypeScript. Learning project: see
 [docs/PLAN.md](docs/PLAN.md) for the plan, [docs/DECISIONS.md](docs/DECISIONS.md)
 for technical decisions and [docs/LEARNINGS.md](docs/LEARNINGS.md) for the problem log.
 
+**Live:** https://crm-nu-tawny-81.vercel.app
+
 ## Requirements
 
 - Node.js 26 (see `.node-version`)
@@ -11,11 +13,12 @@ for technical decisions and [docs/LEARNINGS.md](docs/LEARNINGS.md) for the probl
 
 ## Commands
 
-| Command           | What it does                                                          |
-| ----------------- | --------------------------------------------------------------------- |
-| `pnpm dev`        | Development server on http://localhost:3000                           |
-| `pnpm check`      | All quality gates: typecheck, lint, format, knip, tests, ratio, build |
-| `pnpm test`       | Unit tests with coverage (≥ 90 % lines and branches)                  |
-| `pnpm test:e2e`   | Playwright end-to-end tests                                           |
-| `pnpm test:ratio` | Fails if test lines / source lines < 2.0                              |
-| `pnpm format`     | Format all files with Prettier                                        |
+| Command                        | What it does                                                          |
+| ------------------------------ | --------------------------------------------------------------------- |
+| `pnpm dev`                     | Development server on http://localhost:3000                           |
+| `pnpm check`                   | All quality gates: typecheck, lint, format, knip, tests, ratio, build |
+| `pnpm test`                    | Unit tests with coverage (≥ 90 % lines and branches)                  |
+| `pnpm test:e2e`                | Playwright end-to-end tests                                           |
+| `pnpm test:ratio`              | Fails if test lines / source lines < 2.0                              |
+| `BASE_URL=<url> pnpm test:e2e` | Run e2e tests against a deployed URL instead of a local server        |
+| `pnpm format`                  | Format all files with Prettier                                        |
