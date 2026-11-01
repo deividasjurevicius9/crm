@@ -170,4 +170,4 @@ Kiekvieną pasirinkimą perklausk prieš įgyvendinant: 3 variantai ir rekomenda
 
 ## Būsena
 
-- [x] E0 · [ ] E1 · [ ] E2 · [ ] E3 · [ ] E4 · [ ] E5 · [ ] E6 · [ ] E7
+- [x] E0 · [x] E1 · [ ] E2 · [ ] E3 · [ ] E4 · [ ] E5 · [ ] E6 · [ ] E7
