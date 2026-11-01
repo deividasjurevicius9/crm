@@ -281,3 +281,56 @@ describe("deleting a user", () => {
     expect(accounts).toHaveLength(0);
   });
 });
+
+describe("cross-site request protection (trusted origins)", () => {
+  const TRUSTED = "https://crm-git-feat-x-dj.vercel.app";
+
+  function signInRequest(origin: string, email: string) {
+    return new Request(`${BASE_URL}/api/auth/sign-in/email`, {
+      method: "POST",
+      headers: { "content-type": "application/json", origin },
+      body: JSON.stringify({ email, password: PASSWORD }),
+    });
+  }
+
+  let guarded: ReturnType<typeof createAuth>;
+
+  beforeAll(() => {
+    guarded = createAuth({
+      db: testDb.db,
+      secret: SECRET,
+      baseURL: BASE_URL,
+      trustedOrigins: [TRUSTED],
+    });
+  });
+
+  it("accepts a sign-in posted from the app's own origin", async () => {
+    const email = uniqueEmail();
+    await signUp(email);
+
+    const response = await guarded.handler(signInRequest(BASE_URL, email));
+
+    expect(response.status).toBe(200);
+  });
+
+  it("accepts a sign-in posted from another trusted origin", async () => {
+    const email = uniqueEmail();
+    await signUp(email);
+
+    const response = await guarded.handler(signInRequest(TRUSTED, email));
+
+    expect(response.status).toBe(200);
+  });
+
+  it("rejects a sign-in posted from a foreign site", async () => {
+    const email = uniqueEmail();
+    await signUp(email);
+
+    const response = await guarded.handler(
+      signInRequest("https://evil.example.com", email),
+    );
+
+    expect(response.status).toBe(403);
+    expect(response.headers.get("set-cookie")).toBeNull();
+  });
+});

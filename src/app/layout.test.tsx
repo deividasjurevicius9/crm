@@ -44,7 +44,7 @@ describe("RootLayout", () => {
   it("applies both font CSS variables to <html>", () => {
     const html = renderLayout(null);
 
-    expect(html.props.className).toContain("geist-sans--font-geist-sans");
+    expect(html.props.className).toContain("geist-sans--font-sans");
     expect(html.props.className).toContain("geist-mono--font-geist-mono");
   });
 
