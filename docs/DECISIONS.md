@@ -73,3 +73,15 @@ Each decision: the options considered, the choice, and why.
 - **Options:** (1) own Zod schema in `src/env.ts`, (2) `@t3-oss/env-nextjs`, (3) no validation.
 - **Chosen:** own Zod schema, guarded with `import "server-only"`.
 - **Why:** ~20 readable lines, one dependency fewer; the app fails at startup with a clear message instead of later with an obscure one, and every variable gets a precise type instead of `string | undefined`. `server-only` makes the build fail if the file is ever imported into browser code, so secrets cannot leak to the client. Cost: client-side (`NEXT_PUBLIC_`) variables will need their own schema when they appear.
+
+## 2026-11-01 · E2 · Authentication
+
+- **Options:** (1) Better Auth, (2) Auth.js (NextAuth v5), (3) Clerk.
+- **Chosen:** Better Auth with the Drizzle adapter and the `organization` plugin.
+- **Why:** Email + password, email verification, password reset, Google OAuth, organizations, roles and invitations are built in, and every user, session and membership row lives in our own Postgres, so tenant isolation can be tested with PGlite and "where is the data stored" has one answer. Auth.js discourages password sign-in and has no organizations; Clerk keeps users on its servers and adds vendor lock-in. Cost: younger project with frequent releases; the `viewer` role is added on top of the plugin's default owner/admin/member.
+
+## 2026-11-01 · E2 · esbuild install script
+
+- **Options:** (1) deny (`esbuild: false`), (2) allow (`esbuild: true`), (3) leave unanswered.
+- **Chosen:** deny.
+- **Why:** Install scripts run arbitrary package code on the machine and are a common supply-chain attack vector. esbuild's script only verifies the platform binary, which pnpm already installs as an optional dependency; `drizzle-kit --version` works without it. Leaving it unanswered would fail CI.

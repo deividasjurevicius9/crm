@@ -16,10 +16,13 @@
     "test:watch": "vitest",
     "test:ratio": "node scripts/test-ratio.ts",
     "test:e2e": "playwright test",
-    "check": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm knip && pnpm test && pnpm test:ratio && pnpm build"
+    "check": "pnpm typecheck && pnpm lint && pnpm format:check && pnpm knip && pnpm test && pnpm test:ratio && pnpm build",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate"
   },
   "dependencies": {
     "@vercel/functions": "^3.10.5",
+    "better-auth": "^1.7.14",
     "drizzle-orm": "^0.45.4",
     "next": "16.4.3",
     "pg": "^8.23.1",
@@ -29,6 +32,8 @@
     "zod": "^4.6.7"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.14",
+    "@next/env": "^16.4.3",
     "@playwright/test": "^1.64.1",
     "@tailwindcss/turbopack": "^4",
     "@testing-library/dom": "^10.4.2",
@@ -40,6 +45,7 @@
     "@types/react-dom": "^19",
     "@vitejs/plugin-react": "^6.1.2",
     "@vitest/coverage-v8": "^5.0.5",
+    "drizzle-kit": "^0.31.11",
     "eslint": "^9",
     "eslint-config-next": "16.4.3",
     "eslint-config-prettier": "^10.1.8",
