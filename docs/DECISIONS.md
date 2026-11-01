@@ -43,3 +43,33 @@ Each decision: the options considered, the choice, and why.
 - **Options:** (1) public, (2) private.
 - **Chosen:** public.
 - **Why:** Portfolio project; branch protection on `main` is free only for public repos. Secrets live only in environment variables, never in the repo.
+
+## 2026-11-01 · E2 · Database hosting
+
+- **Options:** (1) Neon, (2) Supabase, (3) Railway.
+- **Chosen:** Neon (serverless Postgres).
+- **Why:** Free tier, native Vercel integration that injects the connection string as an env variable, and instant database branches so preview deployments can use their own copy instead of production data. Cost: the first query after ~5 min idle is slower (~0.5 s) while the compute wakes up. Supabase was rejected because its built-in auth duplicates Better Auth and free projects pause after 7 days idle; Railway has no free tier and no branching.
+
+## 2026-11-01 · E2 · Local development database
+
+- **Options:** (1) separate Neon branch `dev`, (2) the production database, (3) local Postgres in Docker.
+- **Chosen:** Neon branch `dev`; its connection string lives in `.env.development.local` (git-ignored).
+- **Why:** Same Postgres engine and version as production with nothing to install, and local experiments or failed migrations never touch production data; the branch can be reset in seconds. The Vercel integration deliberately leaves the Development environment empty, so `vercel env pull` cannot leak the production URL to the laptop. Automated tests use PGlite in memory instead, so they need no network. Cost: local work needs internet.
+
+## 2026-11-01 · E2 · ORM and migrations
+
+- **Options:** (1) Drizzle + drizzle-kit, (2) Prisma, (3) Kysely.
+- **Chosen:** Drizzle ORM with drizzle-kit migrations.
+- **Why:** Schema is plain TypeScript (no second language, no generate step), queries read almost like the SQL they produce, so the path from "Save" to a database row stays visible. Works directly with PGlite for in-memory integration tests and has an official Better Auth adapter. Cost: younger than Prisma; rare features (some index types) need hand-written SQL in a migration.
+
+## 2026-11-01 · E2 · Postgres driver
+
+- **Options:** (1) `pg` (node-postgres) over TCP, (2) Neon serverless driver over HTTP, (3) Neon serverless driver over WebSocket.
+- **Chosen:** `pg` with a connection pool, connecting through the Neon pooler.
+- **Why:** Supports interactive transactions (needed in E4 for Kanban moves), is the standard Node.js Postgres driver and is not tied to Neon. On Vercel Fluid compute a function instance serves many requests, so pooled TCP connections are reused. The HTTP driver was rejected because it cannot run interactive transactions. Cost: the pool must be configured correctly for serverless (small size, idle timeout).
+
+## 2026-11-01 · E2 · Environment variable validation
+
+- **Options:** (1) own Zod schema in `src/env.ts`, (2) `@t3-oss/env-nextjs`, (3) no validation.
+- **Chosen:** own Zod schema, guarded with `import "server-only"`.
+- **Why:** ~20 readable lines, one dependency fewer; the app fails at startup with a clear message instead of later with an obscure one, and every variable gets a precise type instead of `string | undefined`. `server-only` makes the build fail if the file is ever imported into browser code, so secrets cannot leak to the client. Cost: client-side (`NEXT_PUBLIC_`) variables will need their own schema when they appear.
