@@ -42,3 +42,19 @@ describe("HomePage", () => {
     expect(main).toContainElement(screen.getByText("Under construction."));
   });
 });
+
+describe("HomePage account links", () => {
+  it("offers sign-up and sign-in in a labelled navigation", () => {
+    render(<HomePage />);
+
+    const nav = screen.getByRole("navigation", { name: "Account" });
+    expect(nav).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: "Create account" }),
+    ).toHaveAttribute("href", "/sign-up");
+    expect(screen.getByRole("link", { name: "Sign in" })).toHaveAttribute(
+      "href",
+      "/sign-in",
+    );
+  });
+});

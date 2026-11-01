@@ -85,3 +85,27 @@ Each decision: the options considered, the choice, and why.
 - **Options:** (1) deny (`esbuild: false`), (2) allow (`esbuild: true`), (3) leave unanswered.
 - **Chosen:** deny.
 - **Why:** Install scripts run arbitrary package code on the machine and are a common supply-chain attack vector. esbuild's script only verifies the platform binary, which pnpm already installs as an optional dependency; `drizzle-kit --version` works without it. Leaving it unanswered would fail CI.
+
+## 2026-11-01 · E2 · Database for preview deployments
+
+- **Options:** (1) a Neon branch per preview deployment, (2) one shared `preview` branch, (3) the production database.
+- **Chosen:** a Neon branch per preview deployment, created by the Vercel ↔ Neon integration from `main`.
+- **Why:** Until now `DATABASE_URL` had one value for Preview and Production, so every PR preview used the production database: sign-ups on a preview landed in production, and a deploy-time migration from an unmerged PR would change the production schema before review. Per-deployment branches give each PR its own copy and only merged code touches production. Cost: Free plan branch limit (~10 at a time), slightly slower first preview build.
+
+## 2026-11-01 · E2 · Running migrations on deploy
+
+- **Options:** (1) in the Vercel build (`vercel-build` script), (2) a GitHub Actions job after merge, (3) manually from the laptop.
+- **Chosen:** Vercel build: `drizzle-kit migrate && next build`.
+- **Why:** One mechanism for every environment: each preview migrates its own Neon branch, production migrates only after a merge to `main`, and the production URL never leaves Vercel. A failed migration fails the build, so the new code is not released. Cost: if the migration succeeds and the build then fails, the schema is already changed. **Rule:** every migration must be backwards compatible with the code currently running (expand → contract: add first, remove in a later PR once no code uses it).
+
+## 2026-11-01 · E2 · UI components
+
+- **Options:** (1) shadcn/ui, (2) hand-written Tailwind components, (3) a packaged library (Mantine, HeroUI).
+- **Chosen:** shadcn/ui.
+- **Why:** The component source is copied into `src/components/ui/`, so it is ours to read and change; built on Radix primitives, so focus handling and ARIA are solved (our lint enforces `jsx-a11y` strict); provides the tables, dialogs and command palette needed in E3–E5. Cost: a lot of committed code we did not write.
+
+## 2026-11-01 · E2 · How forms submit
+
+- **Options:** (1) Server Actions, (2) Better Auth client in the browser, (3) plain HTML POST to `/api/auth`.
+- **Chosen:** Server Actions calling `auth.api.*`, with the `nextCookies` plugin setting the session cookie.
+- **Why:** Validation runs on the server with Zod (the only validation an attacker cannot skip), forms work without JavaScript, errors show next to fields via `useActionState`, and it is the same form → action → validation → database path every CRM "Save" will use. Cost: a little more server code than calling the client SDK.

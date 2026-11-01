@@ -130,6 +130,7 @@ describe("createDb", () => {
 describe("getDb", () => {
   it("connects with DATABASE_URL from the validated env", async () => {
     vi.stubEnv("DATABASE_URL", URL_A);
+    vi.stubEnv("BETTER_AUTH_SECRET", "0123456789abcdef0123456789abcdef");
     const { getDb } = await loadClient();
 
     const pool = getDb().$client;
@@ -140,6 +141,7 @@ describe("getDb", () => {
 
   it("returns the same instance on every call: one pool per server instance", async () => {
     vi.stubEnv("DATABASE_URL", URL_A);
+    vi.stubEnv("BETTER_AUTH_SECRET", "0123456789abcdef0123456789abcdef");
     const { getDb } = await loadClient();
 
     const first = getDb();
