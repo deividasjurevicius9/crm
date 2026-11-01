@@ -14,6 +14,7 @@
 6. **Commit'ink** su aiškia žinute.
 7. **Paprašyk Deivido** įrašyti problemą į `docs/LEARNINGS.md` vienu sakiniu: kas buvo ir kodėl.
 8. **Python nenaudok.** `any` nenaudok. Taisyklių neišjunginėk, kad praeitų checkai: taisyk priežastį.
+9. **Prieš kiekvieną merge** užduok Deividui 3–4 klausimus apie tą PR: kaip veikia, kur saugomi duomenys, kas vyksta paspaudus mygtuką. Merge tik tada, kai jis atsako savais žodžiais.
 
 ## Tikslas
 

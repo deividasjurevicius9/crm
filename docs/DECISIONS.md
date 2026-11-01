@@ -109,3 +109,9 @@ Each decision: the options considered, the choice, and why.
 - **Options:** (1) Server Actions, (2) Better Auth client in the browser, (3) plain HTML POST to `/api/auth`.
 - **Chosen:** Server Actions calling `auth.api.*`, with the `nextCookies` plugin setting the session cookie.
 - **Why:** Validation runs on the server with Zod (the only validation an attacker cannot skip), forms work without JavaScript, errors show next to fields via `useActionState`, and it is the same form → action → validation → database path every CRM "Save" will use. Cost: a little more server code than calling the client SDK.
+
+## 2026-11-01 · Process · How Deividas learns from each PR
+
+- **Options:** (1) a 3–4 question quiz about every PR before merge, (2) Deividas chooses between options before seeing the recommendation, (3) Deividas reviews the PR diff first.
+- **Chosen:** (1) quiz before every merge.
+- **Why:** Claude was doing almost everything, and the one point where real learning happened was the E1 quiz. It trains exactly the mentor's stage-1 check: explain in 5 minutes without AI where the data is stored, what happens on "Save" and how code reaches the server. Recommendations stay (the mentor's prompt asks for them). Cost: about 20–30 minutes more per PR.
